@@ -62,6 +62,7 @@
         selected.style.backgroundColor = '#FFF8DC';
         let completed_grid = {{ completed_grid|safe }};
         let original_grid = {{ grid|safe }};
+        let current_grid = JSON.parse(JSON.stringify(original_grid));
 
         function erase() {
             selected.textContent = ""
@@ -70,24 +71,25 @@
 
         function fill() {
             filler = event.target
-            number = filler.textContent
+            number = Number(filler.textContent)
             selected.textContent = number
-            if (completed_grid[coords[0]][coords[1]] != number) {
-                selected.style.backgroundColor = 'red'
-            } else {
-                selected.style.backgroundColor = '#FFF8DC'
-            }
+            mark_selected_solution()
+            set_current_grid_value(current_coords, number)
+            check_solved()
         }
 
         function select_cell() {
             let original_value = index_grid(original_grid, get_coords(event.target))
             if (original_value == 0) {
-                selected.style.backgroundColor = 'white'
+                if (selected.style.backgroundColor != 'red') {
+                    selected.style.backgroundColor = 'white'
+                }
                 selected = event.target
-                selected.style.backgroundColor = '#FFF8DC'
-                coords = get_coords(selected)
+                if (selected.style.backgroundColor != 'red') {
+                    selected.style.backgroundColor = '#FFF8DC'
+                }
+                current_coords = get_coords(selected)
             }
-
         }
 
         function get_coords(element) {
@@ -96,8 +98,31 @@
         }
 
 
-        function index_grid(grid, coords) {
-            return grid[coords[0]][coords[1]]
+        function index_grid(selected_grid, coords) {
+            return selected_grid[coords[0]][coords[1]]
+        }
+
+        function set_current_grid_value(coords, value) {
+            current_grid[coords[0]][coords[1]] = value
+        }
+
+        function check_solved() {
+            if (JSON.stringify(current_grid) == JSON.stringify(completed_grid)) {
+                sudoku_finished()
+            }
+        }
+
+        function mark_selected_solution() {
+            let number = Number(selected.textContent)
+            if (index_grid(completed_grid, current_coords) != number) {
+                selected.style.backgroundColor = 'red'
+            } else {
+                selected.style.backgroundColor = '#FFF8DC'
+            }
+        }
+
+        function sudoku_finished() {
+            console.log("success")
         }
 
     </script>
