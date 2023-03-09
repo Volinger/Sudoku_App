@@ -53,16 +53,39 @@
             </tbody>
         </table>
         <button onclick="erase()">Erase</button>
+        <button onclick="new_game()">New Game</button>
+        <select id="Difficulty">
+            {% for difficulty in difficulties %}
+                <option>{{ difficulty }}</option>
+            {% endfor %}
+        </select>
     </div>
 {% endblock %}
 {% block javascript %}
-    <script type="text/javascript">
+    <script onload="init()" type="text/javascript">
         let selected = document.getElementsByTagName('td')[0];
         let coords = get_coords(selected);
         selected.style.backgroundColor = '#FFF8DC';
         let completed_grid = {{ completed_grid|safe }};
         let original_grid = {{ grid|safe }};
+        let difficulties = {{ difficulties|safe }};
         let current_grid = JSON.parse(JSON.stringify(original_grid));
+        let solving_start = new Date();
+        let solving_end = new Date();
+        let result = {
+            'Duration': "",
+            'Time': new Date(),
+            'Difficulty': ""
+        }
+        let selected_difficulty = ""
+
+        let x = new Date(Date.now())
+        console.log(x)
+        console.log(x.toLocaleTimeString())
+
+        function init() {
+            new_game()
+        }
 
         function erase() {
             selected.textContent = ""
@@ -79,7 +102,9 @@
         }
 
         function select_cell() {
+            console.log(original_grid)
             let original_value = index_grid(original_grid, get_coords(event.target))
+            console.log(original_value)
             if (original_value == 0) {
                 if (selected.style.backgroundColor != 'red') {
                     selected.style.backgroundColor = 'white'
@@ -121,8 +146,76 @@
             }
         }
 
+        function init_sudoku_data(response) {
+            completed_grid = response['completed_grid'];
+            original_grid = response['grid'];
+            console.log(original_grid)
+            current_grid = JSON.parse(JSON.stringify(original_grid));
+            let board = document.getElementById("Sudoku")
+            original_grid.forEach((row, row_index) => {
+                row.forEach((cell, cell_index) => {
+                    if (cell != 0) {
+                        board.rows[row_index].cells[cell_index].textContent = cell
+                    } else {
+                        board.rows[row_index].cells[cell_index].textContent = ""
+                    }
+                })
+            })
+            selected = document.getElementsByTagName('td')[0];
+            coords = get_coords(selected);
+            selected.style.backgroundColor = '#FFF8DC';
+            result = {
+                'Duration': new Date(),
+                'Time': new Date(),
+                'Difficulty': ""
+            }
+            solving_start = Date.now()
+        }
+
         function sudoku_finished() {
-            console.log("success")
+            solving_end = Date.now()
+            result['Time'] = new Date()
+            result['Time'].getTime()
+            result['Time'] = result['Time'].toISOString().split('T')[0]
+            result['Duration'] = (solving_end - solving_start)/1000
+            console.log(result['Duration'])
+            result['Difficulty'] = selected_difficulty
+            $.ajax({
+                    type: 'POST',
+                    {#contentType: false,#}
+                    {#processData: false,#}
+                    url: '{% url 'Sudoku-send-result' %}',
+                    data: result,
+                    success: function (response) {
+                        alert("Congratulations!")
+                    },
+                    error: function (response) {
+                        alert(response["responseJSON"]["error"]);
+                    }
+                }
+            )
+        }
+
+        function new_game() {
+            let data = {}
+            difficulty_selector = document.getElementById("Difficulty")
+            difficulty = difficulty_selector.options[difficulty_selector.selectedIndex].text
+            selected_difficulty = difficulty
+            data['Difficulty'] = selected_difficulty
+            data['Size'] = 9
+            $.ajax({
+                    type: 'GET',
+                    url: '{% url 'Sudoku-generate-new' %}',
+                    data: data,
+                    success: function (response) {
+                        console.log(response)
+                        init_sudoku_data(response)
+                    },
+                    error: function (response) {
+                        alert(response["responseJSON"]["error"]);
+                    }
+                }
+            )
         }
 
     </script>

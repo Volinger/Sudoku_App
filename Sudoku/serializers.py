@@ -3,7 +3,12 @@ from .models import Difficulty, Results
 
 
 class ResultSerializer(serializers.ModelSerializer):
-
+	Difficulty = serializers.SlugRelatedField(
+		many=False,
+		read_only=False,
+		slug_field='Option',
+		queryset=Difficulty.objects.all()
+	)
 	class Meta:
 		model = Results
 		fields = '__all__'
