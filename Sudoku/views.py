@@ -6,16 +6,10 @@ import numpy as np
 from .serializers import ResultSerializer, DifficultySerializer
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Difficulty
+from .models import Difficulty, Results
 import json
 
 class SudokuViewSet(viewsets.GenericViewSet):
-
-	# def get_queryset(self):
-	# 	pass
-	#
-	# def get_serializer_class(self):
-	# 	pass
 
 	@action(detail=False, methods=['get'])
 	def sudoku(self, request):
@@ -48,3 +42,13 @@ class SudokuViewSet(viewsets.GenericViewSet):
 		sudoku.prepare_for_solving(difficulty=difficulty)
 		return Response(data={'grid': sudoku.user_grid.tolist(),
 								'completed_grid': sudoku.completed_grid.tolist()})
+
+	@action(detail=False, methods=['get'], url_path=r'leaderboards-view/(?P<difficulty>[\w-]+)')
+	def leaderboards_view(self, request, difficulty=None):
+		difficulties = [value[0] for value in Difficulty.objects.values_list('Option')]
+		leaderboards = [values for values in
+						ResultSerializer(Results.objects.filter(Difficulty__Option=difficulty).order_by('Duration').all(),
+										 many=True).data]
+		return render(request, 'Sudoku/leaderboards.html', context={'difficulties': difficulties,
+																	'leaderboards': leaderboards,
+																	'difficulty': difficulty})

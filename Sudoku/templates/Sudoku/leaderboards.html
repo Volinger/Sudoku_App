@@ -1,0 +1,46 @@
+{% extends "common.html" %}
+
+{% block content %}
+    <table class="table-responsive table-bordered">
+        <thead>
+        <tr>
+            <td>Rank</td>
+            <td>UserId</td>
+            <td>Difficulty</td>
+            <td>Time</td>
+            <td>Duration</td>
+        </tr>
+        </thead>
+        <tbody>
+        {% for result in leaderboards %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ result.UserId }}</td>
+                <td>{{ result.Difficulty }}</td>
+                <td>{{ result.Time }}</td>
+                <td>{{ result.Duration }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <select onchange="select_boards()">
+        {% for diff in difficulties %}
+            <option
+                    {% if diff == difficulty %}
+                        selected
+                    {% endif %}>
+                {{ diff }}</option>
+        {% endfor %}
+    </select>
+{% endblock content %}
+{% block javascript %}
+    <script type="text/javascript">
+        function select_boards() {
+            console.log("aaaa")
+            let difficulty = event.target.options[event.target.selectedIndex].text
+            base_url = "{% url "Sudoku-leaderboards-view" difficulty="placeholder"%}"
+            window.location.href = base_url.replace('placeholder', difficulty)
+        }
+    </script>
+
+{% endblock javascript %}

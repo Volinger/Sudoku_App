@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Difficulty, Results
+from django.contrib.auth.models import User
 
 
 class ResultSerializer(serializers.ModelSerializer):
@@ -9,6 +10,14 @@ class ResultSerializer(serializers.ModelSerializer):
 		slug_field='Option',
 		queryset=Difficulty.objects.all()
 	)
+
+	UserId = serializers.SlugRelatedField(
+		many=False,
+		read_only=False,
+		slug_field='username',
+		queryset=User.objects.all()
+	)
+
 	class Meta:
 		model = Results
 		fields = '__all__'
