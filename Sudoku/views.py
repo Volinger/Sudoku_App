@@ -17,5 +17,5 @@ class SudokuViewSet(viewsets.GenericViewSet):
 		sudoku = SudokuHandler()
 		sudoku.generate(size=9)
 		sudoku.prepare_for_solving(difficulty=50)
-		return render(request, 'Sudoku/sudoku.html', context={'grid': sudoku.user_grid,
+		return render(request, 'Sudoku/sudoku.html', context={'grid': sudoku.user_grid.tolist(),
 															  'completed_grid': sudoku.completed_grid.tolist()})

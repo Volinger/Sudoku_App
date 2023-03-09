@@ -6,7 +6,7 @@
     <h1>Sudoku</h1>
 
     <div class="sudoku-board">
-        <table id = 'Sudoku' class="table-responsive table-bordered">
+        <table id='Sudoku' class="table-responsive table-bordered">
             <tbody>
             {% for row in grid %}
                 <tr>
@@ -14,10 +14,7 @@
                         {% get_width forloop.parentloop.counter as width_top %}
                         {% get_width forloop.counter as width_left %}
                         <td onclick="select_cell()" style="border-left-width: {{ width_left }}; border-top-width:
-                            {{ width_top }};
-                                text-align: center;
-                        font-size:24px; width: 40px;
-                        height:40px">
+                                {{ width_top }}; text-align: center; font-size:24px; width: 40px; height:40px">
                             {% if cell != 0 %}
                                 {{ cell }}
                             {% endif %}
@@ -60,32 +57,48 @@
 {% endblock %}
 {% block javascript %}
     <script type="text/javascript">
-    let selected = document.getElementsByTagName('td')[0]
-    let coords = [selected.cellIndex, selected.parentElement.rowIndex]
-    selected.style.backgroundColor = '#FFF8DC'
-    let completed_grid = {{ completed_grid|safe }}
+        let selected = document.getElementsByTagName('td')[0];
+        let coords = get_coords(selected);
+        selected.style.backgroundColor = '#FFF8DC';
+        let completed_grid = {{ completed_grid|safe }};
+        let original_grid = {{ grid|safe }};
 
-    function erase(){
-        selected.textContent = ""
-    }
-
-    function fill(){
-        filler = event.target
-        number = filler.textContent
-        selected.textContent = number
-        if (completed_grid[coords[0]][coords[1]] != number){
-            selected.style.backgroundColor = 'red'
-        }
-        else{
+        function erase() {
+            selected.textContent = ""
             selected.style.backgroundColor = '#FFF8DC'
         }
-    }
 
-    function select_cell(){
-        selected.style.backgroundColor = 'white'
-        selected = event.target
-        selected.style.backgroundColor = '#FFF8DC'
-        coords = [selected.parentElement.rowIndex, selected.cellIndex]
-    }
+        function fill() {
+            filler = event.target
+            number = filler.textContent
+            selected.textContent = number
+            if (completed_grid[coords[0]][coords[1]] != number) {
+                selected.style.backgroundColor = 'red'
+            } else {
+                selected.style.backgroundColor = '#FFF8DC'
+            }
+        }
+
+        function select_cell() {
+            let original_value = index_grid(original_grid, get_coords(event.target))
+            if (original_value == 0) {
+                selected.style.backgroundColor = 'white'
+                selected = event.target
+                selected.style.backgroundColor = '#FFF8DC'
+                coords = get_coords(selected)
+            }
+
+        }
+
+        function get_coords(element) {
+            let coordinations = [element.parentElement.rowIndex, element.cellIndex]
+            return coordinations
+        }
+
+
+        function index_grid(grid, coords) {
+            return grid[coords[0]][coords[1]]
+        }
+
     </script>
 {% endblock javascript %}
