@@ -1,0 +1,84 @@
+{% extends "common.html" %}
+
+{% block content %}
+
+    <h1>Sudoku</h1>
+
+    <div class="sudoku-board">
+        <table id = 'Sudoku' class="table-responsive table-bordered">
+            <tbody>
+            {% for row in grid %}
+                <tr>
+                    {% for cell in row %}
+                        <td onclick="select_cell()" style="text-align: center; font-size:24px; width: 40px; height:40px">
+                            {% if cell != 0 %}
+                                {{ cell }}
+                            {% endif %}
+                        </td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="number-picker">
+        <p>Number Selector</p>
+        <table class="table-responsive table-bordered">
+            <tbody>
+            <tr>
+                {% for cell in '123' %}
+                    <td onclick="fill()" style="text-align: center; font-size:24px; width: 40px; height: 40px">
+                        {{ cell }}
+                    </td>
+                {% endfor %}
+            </tr>
+            <tr>
+                {% for cell in '456' %}
+                    <td onclick="fill()" style="text-align: center; font-size:24px; width: 40px; height: 40px">
+                        {{ cell }}
+                    </td>
+                {% endfor %}
+            </tr>
+            <tr>
+                {% for cell in '789' %}
+                    <td onclick="fill()" style="text-align: center; font-size:24px; width: 40px; height: 40px">
+                        {{ cell }}
+                    </td>
+                {% endfor %}
+            </tr>
+            </tbody>
+        </table>
+        <button onclick="erase()">Erase</button>
+    </div>
+{% endblock %}
+{% block javascript %}
+    <script type="text/javascript">
+    let selected = document.getElementsByTagName('td')[0]
+    let coords = [selected.cellIndex, selected.parentElement.rowIndex]
+    selected.style.backgroundColor = '#FFF8DC'
+    let completed_grid = {{ completed_grid|safe }}
+
+    function erase(){
+        selected.textContent = ""
+    }
+
+    function fill(){
+        filler = event.target
+        number = filler.textContent
+        selected.textContent = number
+        if (completed_grid[coords[0]][coords[1]] != number){
+            selected.style.backgroundColor = 'red'
+        }
+        else{
+            selected.style.backgroundColor = '#FFF8DC'
+        }
+    }
+
+    function select_cell(){
+        selected.style.backgroundColor = 'white'
+        selected = event.target
+        selected.style.backgroundColor = '#FFF8DC'
+        coords = [selected.parentElement.rowIndex, selected.cellIndex]
+    }
+    </script>
+{% endblock javascript %}
