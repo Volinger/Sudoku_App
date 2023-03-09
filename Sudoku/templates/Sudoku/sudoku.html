@@ -1,4 +1,5 @@
 {% extends "common.html" %}
+{% load sudoku_extras %}
 
 {% block content %}
 
@@ -10,7 +11,13 @@
             {% for row in grid %}
                 <tr>
                     {% for cell in row %}
-                        <td onclick="select_cell()" style="text-align: center; font-size:24px; width: 40px; height:40px">
+                        {% get_width forloop.parentloop.counter as width_top %}
+                        {% get_width forloop.counter as width_left %}
+                        <td onclick="select_cell()" style="border-left-width: {{ width_left }}; border-top-width:
+                            {{ width_top }};
+                                text-align: center;
+                        font-size:24px; width: 40px;
+                        height:40px">
                             {% if cell != 0 %}
                                 {{ cell }}
                             {% endif %}
