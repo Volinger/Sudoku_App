@@ -1,17 +1,15 @@
-{% extends 'base.html' %}
-{% block page_content %}
-    {% block body_block %}
-        <div class="row">
-            <div class="col-md-4">
-            </div>
-            <div class="col-md-6 align-self-center">
-                <h2>Login Your Account</h2>
-                <form method="post">
-                    {{ form }}
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-primary btn-sm">Login</button>
-                </form>
-            </div>
+{% extends 'common.html' %}
+{% load rest_framework %}
+
+{% block title %}Login{% endblock title %}
+
+{% block content %}
+        <div class="col-sm-4">
+            <h1>Login</h1>
+            <form method="post">
+                {% csrf_token %}
+                 {% render_form serializer %}
+                <button type="submit" class="btn btn-primary mt-3">Login</button>
+            </form>
         </div>
-    {% endblock %}
-{% endblock page_content %}
+{% endblock content %}

@@ -1,7 +1,9 @@
 .table-responsive{
     display: table;
+    border-width: 5px;
 }
 
-#Sudoku{
-    border-width: 5px;
+#NumberSelector{
+    /*background-color: blanchedalmond;*/
+    border-color: grey;
 }

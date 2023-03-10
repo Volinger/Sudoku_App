@@ -2,96 +2,90 @@
 {% load sudoku_extras %}
 
 {% block content %}
-
+    {% csrf_token %}
     <link rel="stylesheet" href="/static/sudoku.css">
     <div class="container-fluid">
-    <h1>Sudoku</h1>
     <div class="row">
+        <div class="col-auto mb-3 mr-3">
+            <div class="row">
+                <table id='Sudoku' class="table-responsive table-bordered">
+                    <tbody>
+                    {% for row in grid %}
+                        <tr>
+                            {% for cell in row %}
+                                {% get_width forloop.parentloop.counter as width_top %}
+                                {% get_width forloop.counter as width_left %}
+                                <td onclick="select_cell()"
+                                    style="border-left-width: {{ width_left }}; border-top-width:
+                                            {{ width_top }}; text-align: center; font-size:24px; width: 40px; height:40px">
+                                    {% if cell != 0 %}
+                                        {{ cell }}
+                                    {% endif %}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
         <div class="col-auto">
-            <table id='Sudoku' class="table-responsive table-bordered">
-                <tbody>
-                {% for row in grid %}
+            <div class="row mb-3">
+                <table id="NumberSelector" class="table-responsive table-bordered">
+                    <tbody>
                     <tr>
-                        {% for cell in row %}
-                            {% get_width forloop.parentloop.counter as width_top %}
-                            {% get_width forloop.counter as width_left %}
-                            <td onclick="select_cell()" style="border-left-width: {{ width_left }}; border-top-width:
-                                    {{ width_top }}; text-align: center; font-size:24px; width: 40px; height:40px">
-                                {% if cell != 0 %}
-                                    {{ cell }}
-                                {% endif %}
+                        {% for cell in '123' %}
+                            <td onclick="fill()"
+                                style="text-align: center; font-size:24px; width: 40px; height: 40px">
+                                {{ cell }}
                             </td>
                         {% endfor %}
                     </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
-        <div class="col-auto">
-            <div class="row">
-                <div class="mb-3">
-                    <table class="table-responsive table-bordered">
-                        <tbody>
-                        <tr>
-                            {% for cell in '123' %}
-                                <td onclick="fill()"
-                                    style="text-align: center; font-size:24px; width: 40px; height: 40px">
-                                    {{ cell }}
-                                </td>
-                            {% endfor %}
-                        </tr>
-                        <tr>
-                            {% for cell in '456' %}
-                                <td onclick="fill()"
-                                    style="text-align: center; font-size:24px; width: 40px; height: 40px">
-                                    {{ cell }}
-                                </td>
-                            {% endfor %}
-                        </tr>
-                        <tr>
-                            {% for cell in '789' %}
-                                <td onclick="fill()"
-                                    style="text-align: center; font-size:24px; width: 40px; height: 40px">
-                                    {{ cell }}
-                                </td>
-                            {% endfor %}
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="mb-3">
-                <div class="row">
-                    <button onclick="erase()" type="button" class="btn btn-warning">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                             class="bi bi-eraser"
-                             viewBox="0 0 16 16">
-                            <path d="M8.086 2.207a2 2 0 0 1 2.828 0l3.879 3.879a2 2 0 0 1 0 2.828l-5.5 5.5A2 2 0 0 1 7.879 15H5.12a2 2 0 0 1-1.414-.586l-2.5-2.5a2 2 0 0 1 0-2.828l6.879-6.879zm2.121.707a1 1 0 0 0-1.414 0L4.16 7.547l5.293 5.293 4.633-4.633a1 1 0 0 0 0-1.414l-3.879-3.879zM8.746 13.547 3.453 8.254 1.914 9.793a1 1 0 0 0 0 1.414l2.5 2.5a1 1 0 0 0 .707.293H7.88a1 1 0 0 0 .707-.293l.16-.16z"/>
-                        </svg>
-                        Erase
-                    </button>
-                </div>
-            </div>
-            <div class="mb-3">
-                <div class="row">
-                    <button onclick="new_game()" type="button" class="btn btn-info">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                             class="bi bi-play-fill"
-                             viewBox="0 0 16 16">
-                            <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/>
-                        </svg>
-                        New Game
-                    </button>
-                </div>
-            </div>
-            <div class="mb-3">
-                <div class="row">
-                    <select class="btn btn-info" id="Difficulty">
-                        {% for difficulty in difficulties %}
-                            <option>{{ difficulty }}</option>
+                    <tr>
+                        {% for cell in '456' %}
+                            <td onclick="fill()"
+                                style="text-align: center; font-size:24px; width: 40px; height: 40px">
+                                {{ cell }}
+                            </td>
                         {% endfor %}
-                    </select>
-                </div>
+                    </tr>
+                    <tr>
+                        {% for cell in '789' %}
+                            <td onclick="fill()"
+                                style="text-align: center; font-size:24px; width: 40px; height: 40px">
+                                {{ cell }}
+                            </td>
+                        {% endfor %}
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="row mb-3">
+                <button onclick="erase()" type="button" class="btn btn-warning">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                         class="bi bi-eraser"
+                         viewBox="0 0 16 16">
+                        <path d="M8.086 2.207a2 2 0 0 1 2.828 0l3.879 3.879a2 2 0 0 1 0 2.828l-5.5 5.5A2 2 0 0 1 7.879 15H5.12a2 2 0 0 1-1.414-.586l-2.5-2.5a2 2 0 0 1 0-2.828l6.879-6.879zm2.121.707a1 1 0 0 0-1.414 0L4.16 7.547l5.293 5.293 4.633-4.633a1 1 0 0 0 0-1.414l-3.879-3.879zM8.746 13.547 3.453 8.254 1.914 9.793a1 1 0 0 0 0 1.414l2.5 2.5a1 1 0 0 0 .707.293H7.88a1 1 0 0 0 .707-.293l.16-.16z"/>
+                    </svg>
+                    Erase
+                </button>
+            </div>
+            <div class="row mb-3">
+                <button onclick="new_game()" type="button" class="btn btn-info">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                         class="bi bi-play-fill"
+                         viewBox="0 0 16 16">
+                        <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/>
+                    </svg>
+                    New Game
+                </button>
+            </div>
+            <div class="row mb-3">
+                <select class="btn btn-info" id="Difficulty">
+                    {% for difficulty in difficulties %}
+                        <option>{{ difficulty }}</option>
+                    {% endfor %}
+                </select>
             </div>
         </div>
     </div>
@@ -112,11 +106,9 @@
             'Time': new Date(),
             'Difficulty': ""
         }
-        let selected_difficulty = ""
-
+        let selected_difficulty = difficulties[0]
         let x = new Date(Date.now())
-        console.log(x)
-        console.log(x.toLocaleTimeString())
+        let finished = false
 
         function init() {
             new_game()
@@ -137,7 +129,6 @@
         }
 
         function select_cell() {
-            console.log(original_grid)
             let original_value = index_grid(original_grid, get_coords(event.target))
             console.log(original_value)
             if (original_value == 0) {
@@ -184,15 +175,16 @@
         function init_sudoku_data(response) {
             completed_grid = response['completed_grid'];
             original_grid = response['grid'];
-            console.log(original_grid)
             current_grid = JSON.parse(JSON.stringify(original_grid));
             let board = document.getElementById("Sudoku")
             original_grid.forEach((row, row_index) => {
                 row.forEach((cell, cell_index) => {
+                    selected_cell = board.rows[row_index].cells[cell_index]
+                    selected_cell.style.backgroundColor = 'white'
                     if (cell != 0) {
-                        board.rows[row_index].cells[cell_index].textContent = cell
+                        selected_cell.textContent = cell
                     } else {
-                        board.rows[row_index].cells[cell_index].textContent = ""
+                        selected_cell.textContent = ""
                     }
                 })
             })
@@ -208,42 +200,49 @@
         }
 
         function sudoku_finished() {
-            solving_end = Date.now()
-            result['Time'] = new Date()
-            result['Time'].getTime()
-            result['Time'] = result['Time'].toISOString().split('T')[0]
-            result['Duration'] = (solving_end - solving_start) / 1000
-            console.log(result['Duration'])
-            result['Difficulty'] = selected_difficulty
-            $.ajax({
-                    type: 'POST',
-                    {#contentType: false,#}
-                    {#processData: false,#}
-                    url: '{% url 'Sudoku-send-result' %}',
-                    data: result,
-                    success: function (response) {
-                        alert("Congratulations!")
-                    },
-                    error: function (response) {
-                        alert(response["responseJSON"]["error"]);
+            if (finished == false) {
+                crsf_token = document.getElementsByName("csrfmiddlewaretoken")[0]
+                crsf = crsf_token.value
+                finished = true
+                solving_end = Date.now()
+                result['Time'] = solving_start
+                console.log(result['Time'])
+                result['Time'] = result['Time'].toISOString()
+                result['Duration'] = (solving_end - solving_start) / 1000
+                result['Difficulty'] = selected_difficulty
+                let serializedData = JSON.stringify(result)
+                $.ajax({
+                        type: 'POST',
+                        url: '{% url 'Sudoku-send-result' %}',
+                        data: {
+                            "csrfmiddlewaretoken": crsf,
+                            "result": serializedData
+                        },
+                        success: function (response) {
+                            alert("Congratulations!")
+                        },
+                        error: function (response) {
+                            alert(response["responseJSON"]["error"]);
+                        }
                     }
-                }
-            )
+                )
+            }
         }
 
         function new_game() {
             let data = {}
+            finished = false
             difficulty_selector = document.getElementById("Difficulty")
             difficulty = difficulty_selector.options[difficulty_selector.selectedIndex].text
             selected_difficulty = difficulty
             data['Difficulty'] = selected_difficulty
+            console.log(selected_difficulty)
             data['Size'] = 9
             $.ajax({
                     type: 'GET',
                     url: '{% url 'Sudoku-generate-new' %}',
                     data: data,
                     success: function (response) {
-                        console.log(response)
                         init_sudoku_data(response)
                     },
                     error: function (response) {

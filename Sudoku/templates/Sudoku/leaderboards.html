@@ -3,14 +3,24 @@
 {% block content %}
     <link rel="stylesheet" href="/static/leaderboards.css">
     <div class="col-sm">
-        <table class="table-responsive table-bordered">
-            <thead>
+        <select onchange="select_boards()">
+            {% for diff in difficulties %}
+                <option
+                        {% if diff == difficulty %}
+                            selected
+                        {% endif %}>
+                    {{ diff }}</option>
+            {% endfor %}
+        </select>
+
+        <table class="table table-sm table-responsive table-bordered table-striped">
+            <thead class="thead-dark">
             <tr>
-                <td>Rank</td>
-                <td>UserId</td>
-                <td>Difficulty</td>
-                <td>Time</td>
-                <td>Duration</td>
+                <th>Rank</th>
+                <th>User Name</th>
+                {#                <th>Difficulty</th>#}
+                <th>Time of play (UTC)</th>
+                <th>Duration (s)</th>
             </tr>
             </thead>
             <tbody>
@@ -18,7 +28,7 @@
                 <tr>
                     <td>{{ forloop.counter }}</td>
                     <td>{{ result.UserId }}</td>
-                    <td>{{ result.Difficulty }}</td>
+                    {#                    <td>{{ result.Difficulty }}</td>#}
                     <td>{{ result.Time }}</td>
                     <td>{{ result.Duration }}</td>
                 </tr>
@@ -26,15 +36,6 @@
             </tbody>
         </table>
     </div>
-    <select onchange="select_boards()">
-        {% for diff in difficulties %}
-            <option
-                    {% if diff == difficulty %}
-                        selected
-                    {% endif %}>
-                {{ diff }}</option>
-        {% endfor %}
-    </select>
 {% endblock content %}
 {% block javascript %}
     <script type="text/javascript">

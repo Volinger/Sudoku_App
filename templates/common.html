@@ -28,11 +28,21 @@
                             {% endif %}
                             <li class="nav-item">
                                 <a class="nav-link" href=
-                                        {% url "Sudoku-leaderboards-view" difficulty="Easy" %}>Leaderboards</a>
+                                        {% url "Sudoku-leaderboards-view" difficulty="Beginner" %}>Leaderboards</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href= {% url "login" %}>Login</a>
-                            </li>
+                            {% if user.is_authenticated %}
+                                <li class="nav-item">
+                                    <a class="nav-link" href= {% url "Login-logout" %}>Logout</a>
+                                </li>
+                            {% else %}
+                                <li class="nav-item">
+                                    <a class="nav-link" href= {% url "Login-login" %}>Login</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href= {% url "Login-register" %}>Register</a>
+                                </li>
+                            {% endif %}
+
                         </ul>
                     </div>
                 </nav>

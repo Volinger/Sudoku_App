@@ -15,8 +15,11 @@ class ResultSerializer(serializers.ModelSerializer):
 		many=False,
 		read_only=False,
 		slug_field='username',
-		queryset=User.objects.all()
+		queryset=User.objects.all(),
+		required=False
 	)
+
+	Time = serializers.DateTimeField(format='%d. %m. %Y %H: %M')
 
 	class Meta:
 		model = Results
