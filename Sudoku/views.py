@@ -9,17 +9,26 @@ from rest_framework import status
 from .models import Difficulty, Results
 import json
 
+
+def prepare_sudoku_context(difficulty, size):
+	sudoku = SudokuHandler()
+	sudoku.generate(size=size)
+	sudoku.prepare_for_solving(difficulty=2)
+	context = {'grid': sudoku.user_grid.tolist(),
+			   'completed_grid': sudoku.completed_grid.tolist()}
+	return context
+
+
 class SudokuViewSet(viewsets.GenericViewSet):
 
 	@action(detail=False, methods=['get'])
 	def sudoku(self, request):
+		size = 9
 		difficulties = [value[0] for value in Difficulty.objects.values_list('Option')]
-		sudoku = SudokuHandler()
-		sudoku.generate(size=9)
-		sudoku.prepare_for_solving(difficulty=2)
-		return render(request, 'Sudoku/sudoku.html', context={'grid': sudoku.user_grid.tolist(),
-															  'completed_grid': sudoku.completed_grid.tolist(),
-															  'difficulties': difficulties})
+		difficulty_option = difficulties[0]
+		context = prepare_sudoku_context(difficulty=difficulty_option, size=size)
+		context['difficulties'] = difficulties
+		return render(request, 'Sudoku/sudoku.html', context=context)
 
 	@action(detail=False, methods=['post'])
 	def send_result(self, request):
@@ -36,12 +45,9 @@ class SudokuViewSet(viewsets.GenericViewSet):
 		difficulty_option = request.query_params['Difficulty']
 		difficulty_setting = Difficulty.objects.filter(Option=difficulty_option).values('FieldsToRemove')[0]['FieldsToRemove']
 		size = int(request.query_params['Size'])
-		sudoku = SudokuHandler()
-		sudoku.generate(size=size)
 		difficulty = int(size**2 * difficulty_setting)
-		sudoku.prepare_for_solving(difficulty=difficulty)
-		return Response(data={'grid': sudoku.user_grid.tolist(),
-								'completed_grid': sudoku.completed_grid.tolist()})
+		context = prepare_sudoku_context(difficulty=difficulty, size=size)
+		return Response(data=context)
 
 	@action(detail=False, methods=['get'], url_path=r'leaderboards-view/(?P<difficulty>[\w-]+)')
 	def leaderboards_view(self, request, difficulty=None):

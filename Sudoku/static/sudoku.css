@@ -1,0 +1,8 @@
+.table-responsive{
+    display: table;
+    width: unset;
+}
+
+#Sudoku{
+    border-width: 5px;
+}
