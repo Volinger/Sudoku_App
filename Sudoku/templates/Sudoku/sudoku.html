@@ -3,62 +3,97 @@
 
 {% block content %}
 
-    <h1>Sudoku</h1>
     <link rel="stylesheet" href="/static/sudoku.css">
-    <div class="sudoku-board">
-        <table id='Sudoku' class="table-responsive table-bordered">
-            <tbody>
-            {% for row in grid %}
-                <tr>
-                    {% for cell in row %}
-                        {% get_width forloop.parentloop.counter as width_top %}
-                        {% get_width forloop.counter as width_left %}
-                        <td onclick="select_cell()" style="border-left-width: {{ width_left }}; border-top-width:
-                                {{ width_top }}; text-align: center; font-size:24px; width: 40px; height:40px">
-                            {% if cell != 0 %}
-                                {{ cell }}
-                            {% endif %}
-                        </td>
-                    {% endfor %}
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    <div class="number-picker">
-        <p>Number Selector</p>
-        <table class="table-responsive table-bordered">
-            <tbody>
-            <tr>
-                {% for cell in '123' %}
-                    <td onclick="fill()" style="text-align: center; font-size:24px; width: 40px; height: 40px">
-                        {{ cell }}
-                    </td>
+    <div class="container-fluid">
+    <h1>Sudoku</h1>
+    <div class="row">
+        <div class="col-auto">
+            <table id='Sudoku' class="table-responsive table-bordered">
+                <tbody>
+                {% for row in grid %}
+                    <tr>
+                        {% for cell in row %}
+                            {% get_width forloop.parentloop.counter as width_top %}
+                            {% get_width forloop.counter as width_left %}
+                            <td onclick="select_cell()" style="border-left-width: {{ width_left }}; border-top-width:
+                                    {{ width_top }}; text-align: center; font-size:24px; width: 40px; height:40px">
+                                {% if cell != 0 %}
+                                    {{ cell }}
+                                {% endif %}
+                            </td>
+                        {% endfor %}
+                    </tr>
                 {% endfor %}
-            </tr>
-            <tr>
-                {% for cell in '456' %}
-                    <td onclick="fill()" style="text-align: center; font-size:24px; width: 40px; height: 40px">
-                        {{ cell }}
-                    </td>
-                {% endfor %}
-            </tr>
-            <tr>
-                {% for cell in '789' %}
-                    <td onclick="fill()" style="text-align: center; font-size:24px; width: 40px; height: 40px">
-                        {{ cell }}
-                    </td>
-                {% endfor %}
-            </tr>
-            </tbody>
-        </table>
-        <button onclick="erase()">Erase</button>
-        <button onclick="new_game()">New Game</button>
-        <select id="Difficulty">
-            {% for difficulty in difficulties %}
-                <option>{{ difficulty }}</option>
-            {% endfor %}
-        </select>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-auto">
+            <div class="row">
+                <div class="mb-3">
+                    <table class="table-responsive table-bordered">
+                        <tbody>
+                        <tr>
+                            {% for cell in '123' %}
+                                <td onclick="fill()"
+                                    style="text-align: center; font-size:24px; width: 40px; height: 40px">
+                                    {{ cell }}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            {% for cell in '456' %}
+                                <td onclick="fill()"
+                                    style="text-align: center; font-size:24px; width: 40px; height: 40px">
+                                    {{ cell }}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            {% for cell in '789' %}
+                                <td onclick="fill()"
+                                    style="text-align: center; font-size:24px; width: 40px; height: 40px">
+                                    {{ cell }}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="mb-3">
+                <div class="row">
+                    <button onclick="erase()" type="button" class="btn btn-warning">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                             class="bi bi-eraser"
+                             viewBox="0 0 16 16">
+                            <path d="M8.086 2.207a2 2 0 0 1 2.828 0l3.879 3.879a2 2 0 0 1 0 2.828l-5.5 5.5A2 2 0 0 1 7.879 15H5.12a2 2 0 0 1-1.414-.586l-2.5-2.5a2 2 0 0 1 0-2.828l6.879-6.879zm2.121.707a1 1 0 0 0-1.414 0L4.16 7.547l5.293 5.293 4.633-4.633a1 1 0 0 0 0-1.414l-3.879-3.879zM8.746 13.547 3.453 8.254 1.914 9.793a1 1 0 0 0 0 1.414l2.5 2.5a1 1 0 0 0 .707.293H7.88a1 1 0 0 0 .707-.293l.16-.16z"/>
+                        </svg>
+                        Erase
+                    </button>
+                </div>
+            </div>
+            <div class="mb-3">
+                <div class="row">
+                    <button onclick="new_game()" type="button" class="btn btn-info">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                             class="bi bi-play-fill"
+                             viewBox="0 0 16 16">
+                            <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/>
+                        </svg>
+                        New Game
+                    </button>
+                </div>
+            </div>
+            <div class="mb-3">
+                <div class="row">
+                    <select class="btn btn-info" id="Difficulty">
+                        {% for difficulty in difficulties %}
+                            <option>{{ difficulty }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}
 {% block javascript %}
@@ -177,7 +212,7 @@
             result['Time'] = new Date()
             result['Time'].getTime()
             result['Time'] = result['Time'].toISOString().split('T')[0]
-            result['Duration'] = (solving_end - solving_start)/1000
+            result['Duration'] = (solving_end - solving_start) / 1000
             console.log(result['Duration'])
             result['Difficulty'] = selected_difficulty
             $.ajax({
