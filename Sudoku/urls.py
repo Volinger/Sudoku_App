@@ -3,7 +3,7 @@ from . import views
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
-router.register(r'sudoku', views.SudokuViewSet, basename="Sudoku")
+router.register(r'', views.SudokuViewSet, basename="Sudoku")
 
 urlpatterns = [
     path('', include(router.urls)),

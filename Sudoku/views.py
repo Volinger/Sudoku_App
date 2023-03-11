@@ -10,7 +10,7 @@ from .models import Difficulty, Results
 import json
 
 
-def prepare_sudoku_context(size, difficulty_setting):
+def prepare_sudoku_context(size: int, difficulty_setting: float):
 	"""
 	Based on sudoku configuration params (difficulty_setting and size), prepare context containing sudoku data which
 	will be used by UI.
@@ -27,7 +27,7 @@ def prepare_sudoku_context(size, difficulty_setting):
 	return context
 
 
-def calculate_difficulty(size, difficulty_setting):
+def calculate_difficulty(size: int, difficulty_setting: float):
 	"""
 	Sudoku package defines difficulty as number of fields which should be removed from grid. Since we define it as %
 	of the grid which should be removed, conversion is perfomed here.
@@ -45,7 +45,7 @@ class SudokuViewSet(viewsets.GenericViewSet):
 	"""
 
 	@action(detail=False, methods=['get'])
-	def sudoku(self, request):
+	def sudoku_game(self, request):
 		"""
 		Renders sudoku view with default new game settings.
 		:param request:
@@ -92,7 +92,7 @@ class SudokuViewSet(viewsets.GenericViewSet):
 		return Response(data=context)
 
 	@action(detail=False, methods=['get'], url_path=r'leaderboards-view/(?P<difficulty>[\w-]+)')
-	def leaderboards_view(self, request, difficulty=None):
+	def leaderboards_view(self, request, difficulty: str = None):
 		"""
 		Renders UI which displays best scores.
 		:param request:
@@ -100,9 +100,9 @@ class SudokuViewSet(viewsets.GenericViewSet):
 		:return:
 		"""
 		difficulties = [value[0] for value in Difficulty.objects.values_list('Option')]
-		leaderboards = [values for values in
-						ResultSerializer(Results.objects.filter(Difficulty__Option=difficulty).order_by(
-							'Duration').all()[:10], many=True).data]
+		results_query = Results.objects.filter(Difficulty__Option=difficulty).order_by('Duration')
+		top_results = ResultSerializer(results_query.all()[:10], many=True)
+		leaderboards = [values for values in top_results.data]
 		return render(request, 'Sudoku/leaderboards.html', context={'difficulties': difficulties,
 																	'leaderboards': leaderboards,
 																	'difficulty': difficulty})
