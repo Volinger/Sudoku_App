@@ -47,16 +47,12 @@ class SudokuViewSet(viewsets.GenericViewSet):
 	@action(detail=False, methods=['get'])
 	def sudoku_game(self, request):
 		"""
-		Renders sudoku view with default new game settings.
+		Displays sudoku game view.
 		:param request:
 		:return:
 		"""
-		size = 9  # Default sudoku grid size
 		difficulties = [value[0] for value in Difficulty.objects.values_list('Option')]
-		difficulty_setting = Difficulty.objects.filter(Option=difficulties[0]).values('FieldsToRemove')[0][
-			'FieldsToRemove']
-		context = prepare_sudoku_context(difficulty_setting=difficulty_setting, size=size)
-		context['difficulties'] = difficulties
+		context = {'difficulties': difficulties}
 		return render(request, 'Sudoku/sudoku.html', context=context)
 
 	@action(detail=False, methods=['post'])

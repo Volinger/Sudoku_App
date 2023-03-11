@@ -1,9 +1,19 @@
-.table-responsive{
+.table-responsive {
     display: table;
     border-width: 5px;
 }
 
-#NumberSelector{
-    /*background-color: blanchedalmond;*/
+#NumberSelector {
     border-color: grey;
+}
+
+#Counter {
+    font-size: 1rem;
+}
+
+.SelectorNumber {
+    text-align: center;
+    font-size: 24px;
+    width: 40px;
+    height: 40px
 }

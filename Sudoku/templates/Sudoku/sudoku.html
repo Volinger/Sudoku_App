@@ -10,17 +10,19 @@
             <div class="row">
                 <table id='Sudoku' class="table-responsive table-bordered">
                     <tbody>
-                    {% for row in grid %}
+                    {% for row in '123456789' %}
+                        {# This is currently hardcoding grid to size 9x9. #TBD: move generation to js #}
                         <tr>
-                            {% for cell in row %}
+                            {% for cell in '123456789' %}
                                 {% get_width forloop.parentloop.counter as width_top %}
                                 {% get_width forloop.counter as width_left %}
-                                <td onclick="select_cell()"
-                                    style="border-left-width: {{ width_left }}; border-top-width:
-                                            {{ width_top }}; text-align: center; font-size:24px; width: 40px; height:40px">
-                                    {% if cell != 0 %}
-                                        {{ cell }}
-                                    {% endif %}
+                                <td class="SudokuCell" onclick="select_cell()"
+                                    style="border-left-width: {{ width_left }};
+                                            border-top-width: {{ width_top }};
+                                            text-align: center;
+                                            font-size:24px;
+                                            width: 40px;
+                                            height:40px">
                                 </td>
                             {% endfor %}
                         </tr>
@@ -35,24 +37,21 @@
                     <tbody>
                     <tr>
                         {% for cell in '123' %}
-                            <td onclick="fill()"
-                                style="text-align: center; font-size:24px; width: 40px; height: 40px">
+                            <td class="SelectorNumber" onclick="fill()">
                                 {{ cell }}
                             </td>
                         {% endfor %}
                     </tr>
                     <tr>
                         {% for cell in '456' %}
-                            <td onclick="fill()"
-                                style="text-align: center; font-size:24px; width: 40px; height: 40px">
+                            <td class="SelectorNumber" onclick="fill()">
                                 {{ cell }}
                             </td>
                         {% endfor %}
                     </tr>
                     <tr>
                         {% for cell in '789' %}
-                            <td onclick="fill()"
-                                style="text-align: center; font-size:24px; width: 40px; height: 40px">
+                            <td class="SelectorNumber" onclick="fill()">
                                 {{ cell }}
                             </td>
                         {% endfor %}
@@ -65,7 +64,11 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                          class="bi bi-eraser"
                          viewBox="0 0 16 16">
-                        <path d="M8.086 2.207a2 2 0 0 1 2.828 0l3.879 3.879a2 2 0 0 1 0 2.828l-5.5 5.5A2 2 0 0 1 7.879 15H5.12a2 2 0 0 1-1.414-.586l-2.5-2.5a2 2 0 0 1 0-2.828l6.879-6.879zm2.121.707a1 1 0 0 0-1.414 0L4.16 7.547l5.293 5.293 4.633-4.633a1 1 0 0 0 0-1.414l-3.879-3.879zM8.746 13.547 3.453 8.254 1.914 9.793a1 1 0 0 0 0 1.414l2.5 2.5a1 1 0 0 0 .707.293H7.88a1 1 0 0 0 .707-.293l.16-.16z"/>
+                        <path d="M8.086 2.207a2 2 0 0 1 2.828 0l3.879 3.879a2 2 0 0 1 0 2.828l-5.5 5.5A2 2 0 0 1 7.879
+                        15H5.12a2 2 0 0 1-1.414-.586l-2.5-2.5a2 2 0 0 1 0-2.828l6.879-6.879zm2.121.707a1 1 0 0 0-1.414
+                        0L4.16 7.547l5.293 5.293 4.633-4.633a1 1 0 0 0 0-1.414l-3.879-3.879zM8.746 13.547 3.453 8.254
+                        1.914 9.793a1 1 0 0 0 0 1.414l2.5 2.5a1 1 0 0 0 .707.293H7.88a1 1 0 0 0 .707-.293l.16-.16z">
+                        </path>
                     </svg>
                     Erase
                 </button>
@@ -75,7 +78,9 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                          class="bi bi-play-fill"
                          viewBox="0 0 16 16">
-                        <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/>
+                        <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01
+                        1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z">
+                        </path>
                     </svg>
                     New Game
                 </button>
@@ -89,26 +94,27 @@
             </div>
         </div>
     </div>
+    <div class="row mb-3">
+        <span class="badge badge-dark" id="Counter">Time passed: 0 s</span>
+    </div>
 {% endblock %}
 {% block javascript %}
-    <script onload="init()" type="text/javascript">
-        let selected = document.getElementsByTagName('td')[0];
-        let coords = get_coords(selected);
-        selected.style.backgroundColor = '#FFF8DC';
-        let completed_grid = {{ completed_grid|safe }};
-        let original_grid = {{ grid|safe }};
+    <script type="text/javascript">
+        let selected = null;
+        let counter = null;
+        let coords = null;
+        let completed_grid = null;
+        let original_grid = null;
+        let current_grid = null;
+        let solving_start = null;
+        let solving_end = null;
+        let result = null;
         let difficulties = {{ difficulties|safe }};
-        let current_grid = JSON.parse(JSON.stringify(original_grid));
-        let solving_start = new Date();
-        let solving_end = new Date();
-        let result = {
-            'Duration': "",
-            'Time': new Date(),
-            'Difficulty': ""
-        }
-        let selected_difficulty = difficulties[0]
-        let x = new Date(Date.now())
-        let finished = false
+        let selected_difficulty = difficulties[0];
+        let x = null;
+        let finished = null;
+        let cell_colors = {'normal': 'white', 'selected': '#FFF8DC', 'error': 'red'}
+        init()
 
         function init() {
             new_game()
@@ -116,12 +122,13 @@
 
         function erase() {
             selected.textContent = ""
-            selected.style.backgroundColor = '#FFF8DC'
+            selected.style.backgroundColor = cell_colors.selected
         }
 
         function fill() {
-            filler = event.target
-            number = Number(filler.textContent)
+            // Fill selected cell with number which was clicked and check if the sudoku was solved
+            let filler = event.target
+            let number = Number(filler.textContent)
             selected.textContent = number
             mark_selected_solution()
             set_current_grid_value(current_coords, number)
@@ -130,14 +137,13 @@
 
         function select_cell() {
             let original_value = index_grid(original_grid, get_coords(event.target))
-            console.log(original_value)
             if (original_value == 0) {
-                if (selected.style.backgroundColor != 'red') {
-                    selected.style.backgroundColor = 'white'
+                if (selected.style.backgroundColor != cell_colors.error) {
+                    selected.style.backgroundColor = cell_colors.normal
                 }
                 selected = event.target
-                if (selected.style.backgroundColor != 'red') {
-                    selected.style.backgroundColor = '#FFF8DC'
+                if (selected.style.backgroundColor != cell_colors.error) {
+                    selected.style.backgroundColor = cell_colors.selected
                 }
                 current_coords = get_coords(selected)
             }
@@ -148,7 +154,6 @@
             return coordinations
         }
 
-
         function index_grid(selected_grid, coords) {
             return selected_grid[coords[0]][coords[1]]
         }
@@ -158,21 +163,24 @@
         }
 
         function check_solved() {
+            // If sudoku was solved, send data to server.
             if (JSON.stringify(current_grid) == JSON.stringify(completed_grid)) {
                 sudoku_finished()
             }
         }
 
         function mark_selected_solution() {
+            // Compare number filled to solution and color field based on whether it matches or not.
             let number = Number(selected.textContent)
             if (index_grid(completed_grid, current_coords) != number) {
-                selected.style.backgroundColor = 'red'
+                selected.style.backgroundColor = cell_colors.error
             } else {
-                selected.style.backgroundColor = '#FFF8DC'
+                selected.style.backgroundColor = cell_colors.selected
             }
         }
 
         function init_sudoku_data(response) {
+            // Initialize data and parse puzzle received from server in response to grid, them start the game.
             completed_grid = response['completed_grid'];
             original_grid = response['grid'];
             current_grid = JSON.parse(JSON.stringify(original_grid));
@@ -180,7 +188,7 @@
             original_grid.forEach((row, row_index) => {
                 row.forEach((cell, cell_index) => {
                     selected_cell = board.rows[row_index].cells[cell_index]
-                    selected_cell.style.backgroundColor = 'white'
+                    selected_cell.style.backgroundColor = cell_colors.normal
                     if (cell != 0) {
                         selected_cell.textContent = cell
                     } else {
@@ -190,23 +198,39 @@
             })
             selected = document.getElementsByTagName('td')[0];
             coords = get_coords(selected);
-            selected.style.backgroundColor = '#FFF8DC';
+            selected.style.backgroundColor = cell_colors.selected;
             result = {
                 'Duration': new Date(),
                 'Time': new Date(),
                 'Difficulty': ""
             }
-            solving_start = Date.now()
+            solving_start = new Date()
+            start_counter()
+        }
+
+        function start_counter() {
+            // Starts counter for game duration.
+            counter = setInterval(function () {
+                let time_passed = (Math.round((Date.now() - solving_start) / 1000))
+                let counter = document.getElementById("Counter")
+                counter.textContent = "Time passed: " + time_passed.toString() + " s"
+            }, 1000)
+        }
+
+        function stop_counter() {
+            // Stops counter for game duration.
+            clearInterval(counter)
         }
 
         function sudoku_finished() {
+            // Send info about finished game to server with relevant data.
             if (finished == false) {
+                stop_counter()
                 crsf_token = document.getElementsByName("csrfmiddlewaretoken")[0]
                 crsf = crsf_token.value
                 finished = true
                 solving_end = Date.now()
                 result['Time'] = solving_start
-                console.log(result['Time'])
                 result['Time'] = result['Time'].toISOString()
                 result['Duration'] = (solving_end - solving_start) / 1000
                 result['Difficulty'] = selected_difficulty
@@ -230,14 +254,14 @@
         }
 
         function new_game() {
+            // Request new sudoku puzzle from server with selected settings.
             let data = {}
             finished = false
-            difficulty_selector = document.getElementById("Difficulty")
-            difficulty = difficulty_selector.options[difficulty_selector.selectedIndex].text
+            let difficulty_selector = document.getElementById("Difficulty")
+            let difficulty = difficulty_selector.options[difficulty_selector.selectedIndex].text
             selected_difficulty = difficulty
             data['Difficulty'] = selected_difficulty
-            console.log(selected_difficulty)
-            data['Size'] = 9
+            data['Size'] = 9 // Currently, sudoku size is hardcoded here
             $.ajax({
                     type: 'GET',
                     url: '{% url 'Sudoku-generate-new' %}',

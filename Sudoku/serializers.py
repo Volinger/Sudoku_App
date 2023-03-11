@@ -19,7 +19,7 @@ class ResultSerializer(serializers.ModelSerializer):
 		required=False
 	)
 
-	Time = serializers.DateTimeField(format='%d. %m. %Y %H: %M')
+	Time = serializers.DateTimeField(format='%d. %m. %Y')
 
 	class Meta:
 		model = Results
