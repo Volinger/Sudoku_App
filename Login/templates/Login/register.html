@@ -1,0 +1,44 @@
+{% extends 'common.html' %}
+{% load rest_framework %}
+{% block title %}Create new account{% endblock title %}
+
+{% block content %}
+    <h1>Register</h1>
+
+    <form>
+        {% csrf_token %}
+        {#        <div class="col-sm-4">#}
+        {% render_form serializer template_pack='rest_framework/vertical' %}
+        <button type="button" onclick="send_data()" class="btn btn-primary mt-3">Create User</button>
+        {#        </div>#}
+    </form>
+{% endblock content %}
+{% block javascript %}
+    <script type="text/javascript">
+        function send_data() {
+            form = document.getElementsByTagName("form")[0]
+            let formdata = new FormData(form)
+            let data = {}
+            for (const pair of formdata.entries()) {
+                data[pair[0]] = pair[1]
+            }
+            crsf_token = document.getElementsByName("csrfmiddlewaretoken")[0]
+            crsf = crsf_token.value
+            let serializedData = JSON.stringify(data)
+            $.ajax({
+                type: 'POST',
+                url: '{% url 'Login-register' %}',
+                data: {
+                    "csrfmiddlewaretoken": crsf,
+                    "data": serializedData
+                },
+                success: function (response) {
+                    window.location.href = response
+                },
+                error: function (response) {
+                    alert(response["responseJSON"]["error"]);
+                }
+            })
+        }
+    </script>
+{% endblock javascript %}
