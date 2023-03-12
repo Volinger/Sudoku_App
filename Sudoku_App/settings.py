@@ -25,7 +25,8 @@ SECRET_KEY = 'django-insecure-g-d9vb%ao^plisl_!vmw@t)7o_ufjnmm6_hf8dwuyhaw@9k1sj
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['127.0.0.1',
+                 'sudoku.pythonanywhere.com']
 
 CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1']
 
