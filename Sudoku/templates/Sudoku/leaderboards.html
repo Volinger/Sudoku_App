@@ -3,38 +3,41 @@
 {% block content %}
     <link rel="stylesheet" href="/static/leaderboards.css">
     <div class="col-sm">
-        <select onchange="select_boards()">
-            {% for diff in difficulties %}
-                <option
-                        {% if diff == difficulty %}
-                            selected
-                        {% endif %}>
-                    {{ diff }}</option>
-            {% endfor %}
-        </select>
-
-        <table class="table table-sm table-responsive table-bordered table-striped">
-            <thead class="thead-dark">
-            <tr>
-                <th>Rank</th>
-                <th>User Name</th>
-                {#                <th>Difficulty</th>#}
-                <th>Date</th>
-                <th>Duration (s)</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for result in leaderboards %}
+        <div class="row mb-3">
+            <select class="btn btn-dark" onchange="select_boards()">
+                {% for diff in difficulties %}
+                    <option
+                            {% if diff == difficulty %}
+                                selected
+                            {% endif %}>
+                        {{ diff }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="row mb-3">
+            <table class="table table-sm table-responsive table-bordered table-striped">
+                <thead class="thead-dark">
                 <tr>
-                    <td>{{ forloop.counter }}</td>
-                    <td>{{ result.UserId }}</td>
-                    {#                    <td>{{ result.Difficulty }}</td>#}
-                    <td>{{ result.Time }}</td>
-                    <td>{{ result.Duration }}</td>
+                    <th>Rank</th>
+                    <th>User Name</th>
+                    {#                <th>Difficulty</th>#}
+                    <th>Date</th>
+                    <th>Duration (s)</th>
                 </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                {% for result in leaderboards %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ result.UserId }}</td>
+                        {#                    <td>{{ result.Difficulty }}</td>#}
+                        <td>{{ result.Time }}</td>
+                        <td>{{ result.Duration }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 {% endblock content %}
 {% block javascript %}

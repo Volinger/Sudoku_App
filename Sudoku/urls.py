@@ -7,5 +7,4 @@ router.register(r'', views.SudokuViewSet, basename="Sudoku")
 
 urlpatterns = [
     path('', include(router.urls)),
-
 ]

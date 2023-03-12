@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'Sudoku',
     'django_extensions',
     'Login',
-    'crispy_forms',
+    # 'crispy_forms',
     'rest_framework'
 ]
 

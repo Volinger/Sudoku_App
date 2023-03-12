@@ -21,7 +21,7 @@ def prepare_sudoku_context(size: int, difficulty_setting: float):
 	sudoku = SudokuHandler()
 	sudoku.generate(size=size)
 	difficulty = calculate_difficulty(size=size, difficulty_setting=difficulty_setting)
-	sudoku.prepare_for_solving(difficulty=difficulty)
+	sudoku.prepare_for_solving(cells_to_remove=difficulty)
 	context = {'grid': sudoku.user_grid.tolist(),
 			   'completed_grid': sudoku.completed_grid.tolist()}
 	return context
